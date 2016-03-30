@@ -18,6 +18,18 @@
 					</simplelist>
 				</revdescription>
 			</revision>
+			<revision>
+				<revnumber>1.1-ocp</revnumber>
+				<date>Wed Mar 30 2016</date>
+				<author>
+					<firstname>ProIDS Sp. z o. o.</firstname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>"Alternative Roaming Provider MAP ATI Extension, v1.01f" specification implemented.</member>
+					</simplelist>
+				</revdescription>
+			</revision>
 		</revhistory>
 	</simpara>
 </appendix>

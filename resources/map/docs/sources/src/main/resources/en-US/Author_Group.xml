@@ -7,5 +7,10 @@
 		<surname>Bhayani</surname>
 		<email>&AUTHOR.EMAIL.AMIT;</email>
 	</author>
+	<author>
+		<firstname>ProIDS Sp. z o.o.</firstname>
+        <contrib>"Alternative Roaming Provider MAP ATI Extension, v1.01f" specification implemented.</contrib>
+		<email>info@pro-ids.com</email>
+	</author>
 
 </authorgroup>

@@ -11,6 +11,7 @@ Mobile application part (MAP) is the protocol that is used to allow the GSM netw
 </para>
 	<para>For further details please look at specs <ulink url="http://www.3gpp.org/ftp/Specs/html-info/29002.htm" /></para>
 	<para>This resource adaptor provides a MAP API for JAIN SLEE applications, adapting the MAP specification for USSD. </para>
+	<para>This resource adaptor provides a custom extension according to "Alternative Roaming Provider MAP ATI Extension, v1.01f" specification. </para>
 	
 
 
