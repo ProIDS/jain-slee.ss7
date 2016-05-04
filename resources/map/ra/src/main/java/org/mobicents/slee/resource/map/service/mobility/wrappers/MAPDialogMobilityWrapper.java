@@ -64,6 +64,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.U
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberCFInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AccessRestrictionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSAllocationRetentionPriority;
@@ -193,7 +194,12 @@ public class MAPDialogMobilityWrapper extends MAPDialogWrapper<MAPDialogMobility
 	@Override
 	public void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo,
 			MAPExtensionContainer extensionContainer) throws MAPException {
-		this.addAnyTimeInterrogationResponse(invokeId, subscriberInfo, extensionContainer);
+		this.wrappedDialog.addAnyTimeInterrogationResponse(invokeId, subscriberInfo, extensionContainer);
+	}
+
+    @Override
+	public void addAnyTimeInterrogationResponse(long invokeId, SubscriberCFInfo subscriberCFInfo) throws MAPException {
+		this.wrappedDialog.addAnyTimeInterrogationResponse(invokeId, subscriberCFInfo);
 	}
 
 	@Override
