@@ -194,12 +194,12 @@ public class MAPDialogMobilityWrapper extends MAPDialogWrapper<MAPDialogMobility
 	@Override
 	public void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo,
 			MAPExtensionContainer extensionContainer) throws MAPException {
-		this.wrappedDialog.addAnyTimeInterrogationResponse(invokeId, subscriberInfo, extensionContainer);
+		this.addAnyTimeInterrogationResponse(invokeId, subscriberInfo, extensionContainer);
 	}
 
     @Override
 	public void addAnyTimeInterrogationResponse(long invokeId, SubscriberCFInfo subscriberCFInfo) throws MAPException {
-		this.wrappedDialog.addAnyTimeInterrogationResponse(invokeId, subscriberCFInfo);
+		this.addAnyTimeInterrogationResponse(invokeId, subscriberCFInfo);
 	}
 
 	@Override
