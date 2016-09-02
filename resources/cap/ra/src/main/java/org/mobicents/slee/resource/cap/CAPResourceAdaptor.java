@@ -46,6 +46,7 @@ import javax.slee.resource.SleeEndpoint;
 import javax.slee.resource.StartActivityException;
 import javax.slee.resource.UnrecognizedActivityHandleException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
@@ -243,6 +244,8 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 	private String capJndi = null;
 	private transient static final Address address = new Address(AddressPlan.IP, "localhost");
 
+	boolean raIsStopping = false;
+
 	public CAPResourceAdaptor() {
 		this.capProvider = new CAPProviderWrapper(this);
 	}
@@ -370,6 +373,7 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 		} catch (Exception e) {
 			this.tracer.severe("Failed to activate CAP RA ", e);
 		}
+		raIsStopping = false;
 	}
 
 	public void raConfigurationUpdate(ConfigProperties properties) {
@@ -400,8 +404,10 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 	}
 
 	public void raStopping() {
-		// TODO Auto-generated method stub
-
+		if (tracer.isInfoEnabled()) {
+			tracer.info("raStopping request received");
+		}
+		raIsStopping = true;
 	}
 
 	public void raUnconfigure() {
@@ -516,7 +522,7 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 
 	private CAPDialogActivityHandle onEvent(String eventName, CAPDialogWrapper dw, CAPEvent event, int flags) {
 		if (dw == null) {
-			this.tracer.severe(String.format("Firing %s but CAPDialogWrapper userObject is null", eventName));
+			this.tracer.severe(String.format("Skip firing %s as CAPDialogWrapper userObject is null", eventName));
 			return null;
 		}
 
@@ -587,6 +593,19 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 				this.tracer.fine(String.format("Received onDialogRequest id=%d ", capDialog.getLocalDialogId()));
 			}
 
+			if (raIsStopping) {
+				this.tracer.warning(String.format("RA is in graceful shutdown mode, dropping new dialog request (otid=%d, dtid=%d)",
+						capDialog.getRemoteDialogId(),
+						capDialog.getLocalDialogId()));
+				try {
+					capDialog.abort(CAPUserAbortReason.no_reason_given);
+				}
+				catch (Exception ex) {
+					this.tracer.warning("ignored error on aborting dialog: " + ex.getMessage(), ex);
+				}
+				return;
+			}
+
 			CAPDialogActivityHandle activityHandle = new CAPDialogActivityHandle(capDialog.getLocalDialogId());
 			CAPDialogWrapper capDialogWrapper = null;
 
@@ -626,7 +645,9 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 			CAPDialogActivityHandle handle = onEvent(dialogRelease.getEventTypeName(), capDialogWrapper, dialogRelease);
 
 			// End Activity
-			this.sleeEndpoint.endActivity(handle);
+			if (handle!=null) {
+				this.sleeEndpoint.endActivity(handle);
+			}
 		} catch (Exception e) {
 			this.tracer.severe(String.format(
 					"onDialogRelease : Exception while trying to end activity for CAPDialog=%s", capDialog), e);
@@ -702,6 +723,9 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 
 	@Override
 	public void onInitialDPRequest(InitialDPRequest ind) {
+		if (this.tracer.isFineEnabled()) {
+			this.tracer.fine(String.format("Received onInitialDPRequest id=%d ", ind.getCAPDialog().getLocalDialogId()));
+		}
 		CAPDialogCircuitSwitchedCallWrapper capDialogCircuitSwitchedCallWrapper = (CAPDialogCircuitSwitchedCallWrapper) ind
 				.getCAPDialog().getUserObject();
 		InitialDPRequestWrapper event = new InitialDPRequestWrapper(capDialogCircuitSwitchedCallWrapper, ind);
