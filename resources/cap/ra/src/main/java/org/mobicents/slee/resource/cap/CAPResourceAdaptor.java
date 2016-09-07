@@ -22,31 +22,6 @@
 
 package org.mobicents.slee.resource.cap;
 
-import javax.naming.InitialContext;
-import javax.slee.Address;
-import javax.slee.AddressPlan;
-import javax.slee.SLEEException;
-import javax.slee.facilities.Tracer;
-import javax.slee.resource.ActivityAlreadyExistsException;
-import javax.slee.resource.ActivityFlags;
-import javax.slee.resource.ActivityHandle;
-import javax.slee.resource.ActivityIsEndingException;
-import javax.slee.resource.ConfigProperties;
-import javax.slee.resource.EventFlags;
-import javax.slee.resource.FailureReason;
-import javax.slee.resource.FireEventException;
-import javax.slee.resource.FireableEventType;
-import javax.slee.resource.IllegalEventException;
-import javax.slee.resource.InvalidConfigurationException;
-import javax.slee.resource.Marshaler;
-import javax.slee.resource.ReceivableService;
-import javax.slee.resource.ResourceAdaptor;
-import javax.slee.resource.ResourceAdaptorContext;
-import javax.slee.resource.SleeEndpoint;
-import javax.slee.resource.StartActivityException;
-import javax.slee.resource.UnrecognizedActivityHandleException;
-
-import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
@@ -124,6 +99,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.RequestReportSMSEventRequ
 import org.mobicents.protocols.ss7.cap.api.service.sms.ResetTimerSMSRequest;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.mobicents.slee.container.resource.GracefullyStopableResourceAdaptor;
 import org.mobicents.slee.resource.cap.events.CAPEvent;
 import org.mobicents.slee.resource.cap.events.DialogAccept;
 import org.mobicents.slee.resource.cap.events.DialogClose;
@@ -202,6 +178,30 @@ import org.mobicents.slee.resource.cap.service.sms.wrappers.ResetTimerSMSRequest
 import org.mobicents.slee.resource.cap.wrappers.CAPDialogWrapper;
 import org.mobicents.slee.resource.cap.wrappers.CAPProviderWrapper;
 
+import javax.naming.InitialContext;
+import javax.slee.Address;
+import javax.slee.AddressPlan;
+import javax.slee.SLEEException;
+import javax.slee.facilities.Tracer;
+import javax.slee.resource.ActivityAlreadyExistsException;
+import javax.slee.resource.ActivityFlags;
+import javax.slee.resource.ActivityHandle;
+import javax.slee.resource.ActivityIsEndingException;
+import javax.slee.resource.ConfigProperties;
+import javax.slee.resource.EventFlags;
+import javax.slee.resource.FailureReason;
+import javax.slee.resource.FireEventException;
+import javax.slee.resource.FireableEventType;
+import javax.slee.resource.IllegalEventException;
+import javax.slee.resource.InvalidConfigurationException;
+import javax.slee.resource.Marshaler;
+import javax.slee.resource.ReceivableService;
+import javax.slee.resource.ResourceAdaptor;
+import javax.slee.resource.ResourceAdaptorContext;
+import javax.slee.resource.SleeEndpoint;
+import javax.slee.resource.StartActivityException;
+import javax.slee.resource.UnrecognizedActivityHandleException;
+
 /**
  * 
  * @author amit bhayani
@@ -210,7 +210,7 @@ import org.mobicents.slee.resource.cap.wrappers.CAPProviderWrapper;
  * 
  */
 public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, CAPServiceCircuitSwitchedCallListener,
-		CAPServiceGprsListener, CAPServiceSmsListener {
+		CAPServiceGprsListener, CAPServiceSmsListener, GracefullyStopableResourceAdaptor {
 	/**
 	 * for all events we are interested in knowing when the event failed to be
 	 * processed
@@ -403,9 +403,20 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 		this.realProvider.removeCAPDialogListener(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.mobicents.slee.container.resource.GracefullyStopableResourceAdaptor#gracefulRaStopping()
+	 */
+	public void gracefulRaStopping() {
+		if (tracer.isFineEnabled()) {
+			tracer.fine("Graceful stop requested for " + this.resourceAdaptorContext.getEntityName());
+		}
+		raStopping();
+	}
+
 	public void raStopping() {
 		if (tracer.isInfoEnabled()) {
-			tracer.info("raStopping request received");
+			tracer.info("raStopping request received for " + this.resourceAdaptorContext.getEntityName());
 		}
 		raIsStopping = true;
 	}
@@ -594,14 +605,14 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 			}
 
 			if (raIsStopping) {
-				this.tracer.warning(String.format("RA is in graceful shutdown mode, dropping new dialog request (otid=%d, dtid=%d)",
+				this.tracer.warning(String.format(this.resourceAdaptorContext.getEntityName() +" RA is in graceful shutdown mode, dropping new dialog request (otid=%d, dtid=%d)",
 						capDialog.getRemoteDialogId(),
 						capDialog.getLocalDialogId()));
 				try {
 					capDialog.abort(CAPUserAbortReason.no_reason_given);
 				}
 				catch (Exception ex) {
-					this.tracer.warning("ignored error on aborting dialog: " + ex.getMessage(), ex);
+					this.tracer.warning("Error while aborting dialog due to raStopping: " + ex.getMessage(), ex);
 				}
 				return;
 			}
