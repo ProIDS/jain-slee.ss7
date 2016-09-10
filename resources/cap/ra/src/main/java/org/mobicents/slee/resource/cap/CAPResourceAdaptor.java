@@ -207,6 +207,7 @@ import javax.slee.resource.UnrecognizedActivityHandleException;
  * @author amit bhayani
  * @author baranowb
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  * 
  */
 public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, CAPServiceCircuitSwitchedCallListener,
