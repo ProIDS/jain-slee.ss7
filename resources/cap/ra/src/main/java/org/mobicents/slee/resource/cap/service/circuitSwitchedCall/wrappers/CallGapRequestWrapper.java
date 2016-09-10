@@ -56,8 +56,8 @@ public class CallGapRequestWrapper extends CircuitSwitchedCallMessageWrapper<Cal
         return this.wrappedEvent.getGapTreatment();
     }
 
-    public CAPExtensions getCapExtensions() {
-        return this.wrappedEvent.getCapExtensions();
+    public CAPExtensions getExtensions() {
+        return this.wrappedEvent.getExtensions();
     }
 
     @Override

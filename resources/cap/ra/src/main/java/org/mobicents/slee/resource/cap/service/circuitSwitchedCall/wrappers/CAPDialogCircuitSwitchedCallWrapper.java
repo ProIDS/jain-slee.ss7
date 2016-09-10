@@ -22,8 +22,6 @@
 
 package org.mobicents.slee.resource.cap.service.circuitSwitchedCall.wrappers;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.gap.GapCriteria;
 import org.mobicents.protocols.ss7.cap.api.gap.GapIndicators;
@@ -87,10 +85,13 @@ import org.mobicents.slee.resource.cap.CAPDialogActivityHandle;
 import org.mobicents.slee.resource.cap.CAPResourceAdaptor;
 import org.mobicents.slee.resource.cap.wrappers.CAPDialogWrapper;
 
+import java.util.ArrayList;
+
 
 /**
  * 
  * @author sergey vetyutnev
+ * @author <a href="mailto:bartosz.krok@pro-ids.com"> Bartosz Krok (ProIDS sp. z o.o.)</a>
  * 
  */
 public class CAPDialogCircuitSwitchedCallWrapper extends CAPDialogWrapper<CAPDialogCircuitSwitchedCall> implements CAPDialogCircuitSwitchedCall {
@@ -534,12 +535,18 @@ public class CAPDialogCircuitSwitchedCallWrapper extends CAPDialogWrapper<CAPDia
     public Long addCollectInformationRequest(int invokeId) throws CAPException {
         return this.wrappedDialog.addCollectInformationRequest(invokeId);
     }
-    
+
+	@Override
     public Long addCallGapRequest(GapCriteria gapCriteria, GapIndicators gapIndicators, ControlType controlType, GapTreatment gapTreatment, CAPExtensions capExtension) throws CAPException {
         return this.wrappedDialog.addCallGapRequest(gapCriteria, gapIndicators, controlType, gapTreatment, capExtension);
     }
 
-    @Override
+	@Override
+	public Long addCallGapRequest(int customInvokeTimeout, GapCriteria gapCriteria, GapIndicators gapIndicators, ControlType controlType, GapTreatment gapTreatment, CAPExtensions capExtensions) throws CAPException {
+		return this.wrappedDialog.addCallGapRequest(customInvokeTimeout, gapCriteria, gapIndicators, controlType, gapTreatment, capExtensions);
+	}
+
+	@Override
     public String toString() {
         return "CAPDialogCircuitSwitchedCallWrapper [wrappedDialog=" + wrappedDialog + "]";
     }
