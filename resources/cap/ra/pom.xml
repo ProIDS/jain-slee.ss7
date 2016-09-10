@@ -9,6 +9,10 @@
 
 	<artifactId>restcomm-slee-ra-cap-ra</artifactId>
 
+	<properties>
+		<restcomm.jain.slee.version>6.1.4.59</restcomm.jain.slee.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -19,6 +23,11 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 			<version>${javolution.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.servers.jainslee.core</groupId>
+			<artifactId>spi</artifactId>
+			<version>${restcomm.jain.slee.version}</version>
 		</dependency>
 	</dependencies>
 
