@@ -37,6 +37,7 @@ import org.mobicents.slee.resource.cap.wrappers.CAPProviderWrapper;
 /**
  * 
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  * 
  */
 public class CAPServiceCircuitSwitchedCallWrapper implements CAPServiceCircuitSwitchedCall {
@@ -93,6 +94,23 @@ public class CAPServiceCircuitSwitchedCallWrapper implements CAPServiceCircuitSw
 
 	public CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
         return this.createNewDialog(appCntx, origAddress, destAddress, null);
+	}
+
+	@Override
+	public CAPDialogCircuitSwitchedCall createNewRelayedDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long relayedLocalTrId) throws CAPException {
+		CAPDialogCircuitSwitchedCall capDialog = this.wrappedCircuitSwitchedCall.createNewRelayedDialog(appCntx, origAddress, destAddress, relayedLocalTrId);
+		CAPDialogActivityHandle activityHandle = new CAPDialogActivityHandle(capDialog.getLocalDialogId());
+
+		CAPDialogCircuitSwitchedCallWrapper dw = new CAPDialogCircuitSwitchedCallWrapper(capDialog, activityHandle, this.capProviderWrapper.getRa());
+		capDialog.setUserObject(dw);
+
+		try {
+			this.capProviderWrapper.getRa().startSuspendedActivity(dw);
+		} catch (Exception e) {
+			throw new CAPException(e);
+		}
+
+		return dw;
 	}
 
 	public void addCAPServiceListener(CAPServiceCircuitSwitchedCallListener capServiceListener) {

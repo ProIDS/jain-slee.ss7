@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>restcomm-slee-example-cap-relay</artifactId>
+		<groupId>org.mobicents.examples</groupId>
+		<version>7.0.53</version>
+	</parent>
+	
+	<artifactId>restcomm-slee-example-cap-relay-sbb</artifactId>
+			
+	<dependencies>
+		<dependency>
+			<groupId>org.mobicents.resources</groupId>
+			<artifactId>restcomm-slee-ra-cap-ratype</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.resources</groupId>
+			<artifactId>restcomm-slee-ra-cap-ra</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+				<groupId>org.mobicents.servers.jainslee.api</groupId>
+				<artifactId>jain-slee-11-ext</artifactId>
+				<!--<version>1.0.0.BETA1</version>-->
+				<version>${restcomm.jain.slee.version}</version>
+			</dependency>
+	</dependencies>
+	
+</project>

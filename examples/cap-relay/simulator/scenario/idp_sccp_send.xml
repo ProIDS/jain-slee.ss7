@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<scenario applicationContextName="CapV2_gsmSSF_to_gsmSCF">
+    <send>
+        <InitialDPRequest invokeId="0" isCAPVersion3orLater="false">
+            <serviceKey value="1"/>
+            <calledPartyNumber>
+                <isupCalledPartyNumber address="12270109000" natureOfAddresIndicator="3" numberingPlanIndicator="1"
+                                       internalNetworkNumberIndicator="1"/>
+            </calledPartyNumber>
+            <callingPartyNumber>
+                <isupCallingPartyNumber address="75" natureOfAddresIndicator="3" numberingPlanIndicator="1"
+                                        numberIncompleteIndicator="1" addressRepresentationRestrictedIndicator="1"
+                                        screeningIndicator="3"/>
+            </callingPartyNumber>
+            <callingPartysCategory>
+                <isupCallingPartysCategory callingPartyCategory="10"/>
+            </callingPartysCategory>
+        </InitialDPRequest>
+    </send>
+
+    <delimiter/>
+
+</scenario>
