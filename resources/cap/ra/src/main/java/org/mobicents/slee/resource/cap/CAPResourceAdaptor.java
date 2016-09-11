@@ -48,7 +48,9 @@ import javax.slee.resource.UnrecognizedActivityHandleException;
 
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
+import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
@@ -62,6 +64,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChar
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
@@ -121,6 +124,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.InitialDPSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.ReleaseSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.RequestReportSMSEventRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.ResetTimerSMSRequest;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.slee.resource.cap.events.CAPEvent;
@@ -189,6 +193,7 @@ import org.mobicents.slee.resource.cap.service.gprs.wrappers.ReleaseGPRSRequestW
 import org.mobicents.slee.resource.cap.service.gprs.wrappers.RequestReportGPRSEventRequestWrapper;
 import org.mobicents.slee.resource.cap.service.gprs.wrappers.ResetTimerGPRSRequestWrapper;
 import org.mobicents.slee.resource.cap.service.gprs.wrappers.SendChargingInformationGPRSRequestWrapper;
+import org.mobicents.slee.resource.cap.service.relay.RelayedCapMessage;
 import org.mobicents.slee.resource.cap.service.sms.wrappers.CAPDialogSmsWrapper;
 import org.mobicents.slee.resource.cap.service.sms.wrappers.ConnectSMSRequestWrapper;
 import org.mobicents.slee.resource.cap.service.sms.wrappers.ContinueSMSRequestWrapper;
@@ -206,6 +211,7 @@ import org.mobicents.slee.resource.cap.wrappers.CAPProviderWrapper;
  * @author amit bhayani
  * @author baranowb
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  * 
  */
 public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, CAPServiceCircuitSwitchedCallListener,
@@ -1185,4 +1191,66 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
         onEvent(event.getEventTypeName(), capDialogSmsWrapper, event);
     }
 
+	public void relayCapMessage(int newServiceKey, SccpAddress origAddress, SccpAddress destAddress, CAPMessage capMessage) throws CAPException {
+		if (capMessage.getOperationCode() != CAPOperationCode.initialDP) {
+			String errMsg = "relayCapMessage can be used only on initialDP!";
+			tracer.severe(errMsg);
+			throw new CAPException(errMsg);
+		}
+		// terminate incoming CAP Dialog
+		capMessage.getCAPDialog().release();
+
+		// relay message
+		RelayedCapMessage relayedCapMessage = new RelayedCapMessage(newServiceKey, origAddress, destAddress, capMessage);
+		sendRelayedMessage(relayedCapMessage);
+		if (tracer.isFineEnabled()) {
+			tracer.fine("CAP Message relayed [tcap.localDialogId:" + capMessage.getCAPDialog().getLocalDialogId() + "] => " + relayedCapMessage);
+		}
+
+	}
+
+	private void sendRelayedMessage(RelayedCapMessage relayedCapMessage) throws CAPException{
+		CAPServiceCircuitSwitchedCall outCall = capProvider.getCAPServiceCircuitSwitchedCall();
+		CAPDialogCircuitSwitchedCall outDialog = outCall.createNewRelayedDialog(relayedCapMessage.getCapApplicationContext(),
+				relayedCapMessage.getRemoteAddress(),
+				relayedCapMessage.getLocalAddress(),
+				relayedCapMessage.getRemoteDialogId());
+		CAPMessage capMessage = relayedCapMessage.getCapMessage();
+		if (capMessage.getOperationCode() == CAPOperationCode.initialDP) {
+			InitialDPRequest idp = (InitialDPRequest) capMessage;
+			outDialog.addInitialDPRequest(relayedCapMessage.getNewServiceKey(),
+					idp.getCalledPartyNumber(),
+					idp.getCallingPartyNumber(),
+					idp.getCallingPartysCategory(),
+					idp.getCGEncountered(),
+					idp.getIPSSPCapabilities(),
+					idp.getLocationNumber(),
+					idp.getOriginalCalledPartyID(),
+					idp.getExtensions(),
+					idp.getHighLayerCompatibility(),
+					idp.getAdditionalCallingPartyNumber(),
+					idp.getBearerCapability(),
+					idp.getEventTypeBCSM(),
+					idp.getRedirectingPartyID(),
+					idp.getRedirectionInformation(),
+					idp.getCause(),
+					idp.getServiceInteractionIndicatorsTwo(),
+					idp.getCarrier(),
+					idp.getCugIndex(),
+					idp.getCugInterlock(),
+					idp.getCugOutgoingAccess(),
+					idp.getIMSI(),
+					idp.getSubscriberState(),
+					idp.getLocationInformation(),
+					idp.getExtBasicServiceCode(),
+					idp.getCallReferenceNumber(),
+					idp.getMscAddress(),
+					idp.getCalledPartyBCDNumber(),
+					idp.getTimeAndTimezone(),
+					idp.getCallForwardingSSPending(),
+					idp.getInitialDPArgExtension());
+		}
+		outDialog.send();
+		outDialog.release();
+	}
 }

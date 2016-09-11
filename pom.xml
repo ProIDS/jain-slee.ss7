@@ -17,7 +17,11 @@
 		<connection>scm:git:https://github.com/Restcomm/jain-slee.ss7/</connection>
 		<developerConnection>scm:git:https://github.com/Restcomm/jain-slee.ss7/</developerConnection>
 		<url>https://github.com/Restcomm/jain-slee.ss7/</url>
-	</scm>     
+	</scm>
+
+	<properties>
+		<restcomm.jain.slee.version>2.8.82</restcomm.jain.slee.version>
+	</properties>
 
 	<profiles>
 		<!-- maven release profile, add all existent modules that build properly, so pom versions are updated and artifacts released -->
@@ -52,6 +56,7 @@
 			<module>resources/cap</module>
 			<module>resources/tcap</module>
 			<module>resources/isup</module>
+			<module>examples/cap-relay</module>
 		</modules>
 	</profile>
 	<profile>
