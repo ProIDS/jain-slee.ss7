@@ -541,7 +541,11 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 
 	private CAPDialogActivityHandle onEvent(String eventName, CAPDialogWrapper dw, CAPEvent event, int flags) {
 		if (dw == null) {
-			this.tracer.severe(String.format("Skip firing %s as CAPDialogWrapper userObject is null", eventName));
+			if(!raIsStopping) {
+				this.tracer.severe(String.format("Skip firing %s as CAPDialogWrapper userObject is null", eventName));
+			} else {
+				this.tracer.fine(String.format("Skip firing %s as CAPDialogWrapper userObject is null, but RA is stopping", eventName));
+			}
 			return null;
 		}
 
