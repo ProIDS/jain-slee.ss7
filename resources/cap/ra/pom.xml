@@ -16,7 +16,7 @@
 	<parent>
 		<artifactId>restcomm-slee-ra-cap</artifactId>
 		<groupId>org.mobicents.resources</groupId>
-		<version>7.0.53-proids-1.0.0</version>
+		<version>7.0.53-proids-1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>restcomm-slee-ra-cap-ra</artifactId>
