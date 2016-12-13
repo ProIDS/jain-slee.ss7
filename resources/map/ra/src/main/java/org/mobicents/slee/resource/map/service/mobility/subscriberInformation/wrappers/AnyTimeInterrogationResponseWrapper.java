@@ -2,6 +2,7 @@ package org.mobicents.slee.resource.map.service.mobility.subscriberInformation.w
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberCFInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.slee.resource.map.service.mobility.wrappers.MAPDialogMobilityWrapper;
 import org.mobicents.slee.resource.map.service.mobility.wrappers.MobilityMessageWrapper;
@@ -41,4 +42,15 @@ public class AnyTimeInterrogationResponseWrapper extends MobilityMessageWrapper<
 		return "AnyTimeInterrogationResponseWrapper [wrapped=" + this.wrappedEvent + "]";
 	}
 
+    public SubscriberCFInfo getSubscriberCFInfo() {
+        return this.wrappedEvent.getSubscriberCFInfo();
+    }
+
+    public boolean isSubscriberInfo() {
+        return this.wrappedEvent.isSubscriberInfo();
+    }
+
+    public boolean isSubscriberCFInfo() {
+        return this.wrappedEvent.isSubscriberCFInfo();
+    }
 }

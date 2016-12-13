@@ -626,7 +626,8 @@
 						<entry>This service is used by the gsmSCF, to request information (e.g. subscriber state and location) from the HLR or the GMLC at any time. 
 						This service may also be used by the gsmSCF to request the Mobile Number Portability (MNP) information from the NPLR. 
 						This service is also used by the Presence Network Agent to request information, (e.g. subscriber state and location) about the subscriber 
-						(associated with a presentity) from the HLR at any time (see 3GPP TS 23.141 [128]).</entry>
+						(associated with a presentity) from the HLR at any time (see 3GPP TS 23.141 [128]).
+						The AnyTimeInterrogation Request and Response messages are extended according to the "Alternative Roaming Provider MAP ATI Extension, v1.01f" specification. This extention includes handling of additional request parameter (prop-req) and relevant response parameters.</entry>
 					</row>
 
 					<row>
