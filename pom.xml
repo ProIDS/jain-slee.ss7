@@ -20,7 +20,7 @@
 	</scm>
 
 	<properties>
-		<restcomm.jain.slee.version>2.8.0-SNAPSHOT</restcomm.jain.slee.version>
+		<restcomm.jain.slee.version>proids-2.8.0</restcomm.jain.slee.version>
 	</properties>
 
 	<build>
