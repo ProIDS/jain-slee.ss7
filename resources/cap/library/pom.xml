@@ -37,7 +37,21 @@
 			<groupId>org.mobicents.protocols.ss7.cap</groupId>
 			<version>${ss7.version}</version>
 		</dependency>
-
+		<dependency>
+			<artifactId>inap-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.inap</groupId>
+			<version>${ss7.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>isup-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<version>${ss7.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>isup-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<version>${ss7.version}</version>
+		</dependency>
 		<dependency>
 			<artifactId>sccp-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
@@ -48,7 +62,6 @@
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<version>${ss7.version}</version>
 		</dependency>
-
 		<dependency>
 			<artifactId>tcap-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
