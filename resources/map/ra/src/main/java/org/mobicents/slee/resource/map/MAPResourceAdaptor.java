@@ -509,6 +509,7 @@ public class MAPResourceAdaptor implements ResourceAdaptor, MAPDialogListener, M
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Graceful stop requested for " + this.resourceAdaptorContext.getEntityName());
 		}
+		raIsStopping = true;
 		raStopping();
 	}
 
@@ -525,7 +526,6 @@ public class MAPResourceAdaptor implements ResourceAdaptor, MAPDialogListener, M
 		if (tracer.isFineEnabled()) {
 			tracer.fine("MAP Resource Adaptor entity stopping.");
 		}
-		raIsStopping = true;
 	}
 
 	public void raUnconfigure() {

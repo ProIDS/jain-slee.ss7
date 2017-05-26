@@ -210,12 +210,12 @@ import javax.slee.resource.StartActivityException;
 import javax.slee.resource.UnrecognizedActivityHandleException;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author baranowb
  * @author sergey vetyutnev
  * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
- * 
+ *
  */
 public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, CAPServiceCircuitSwitchedCallListener,
 		CAPServiceGprsListener, CAPServiceSmsListener, GracefullyStopableResourceAdaptor {
@@ -419,6 +419,7 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Graceful stop requested for " + this.resourceAdaptorContext.getEntityName());
 		}
+		raIsStopping = true;
 		raStopping();
 	}
 
@@ -426,7 +427,6 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 		if (tracer.isInfoEnabled()) {
 			tracer.info("raStopping request received for " + this.resourceAdaptorContext.getEntityName());
 		}
-		raIsStopping = true;
 	}
 
 	public void raUnconfigure() {
@@ -493,7 +493,7 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 
 	/**
 	 * Filters the even and returns true if the event was fired
-	 * 
+	 *
 	 * @param eventName
 	 * @param handle
 	 * @param event
@@ -1020,7 +1020,7 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 
     @Override
     public void onCallGapRequest(CallGapRequest ind) {
-        
+
         CAPDialogCircuitSwitchedCallWrapper capDialogCircuitSwitchedCallWrapper = (CAPDialogCircuitSwitchedCallWrapper) ind.getCAPDialog().getUserObject();
         CallGapRequestWrapper event = new CallGapRequestWrapper(capDialogCircuitSwitchedCallWrapper, ind);
         onEvent(event.getEventTypeName(), capDialogCircuitSwitchedCallWrapper, event);
@@ -1029,7 +1029,7 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
 	// ///////////////////////
 	// Service: GPRS
 	// ///////////////////////
-	
+
 	@Override
 	public void onInitialDpGprsRequest(InitialDpGprsRequest ind) {
 		CAPDialogGprsWrapper capDialogGprsWrapper = (CAPDialogGprsWrapper) ind
@@ -1182,7 +1182,7 @@ public class CAPResourceAdaptor implements ResourceAdaptor, CAPDialogListener, C
     // ///////////////////////
     // Service: SMS
     // ///////////////////////
-    
+
 
     @Override
     public void onConnectSMSRequest(ConnectSMSRequest ind) {
